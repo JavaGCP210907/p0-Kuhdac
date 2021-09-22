@@ -1,4 +1,4 @@
-package Project_0.Dao;
+package Project_0.dao;
 
 public interface IndustryDaoInterface {
 
