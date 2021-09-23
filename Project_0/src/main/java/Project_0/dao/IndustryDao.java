@@ -10,7 +10,7 @@ import java.util.List;
 import Project_0.models.Industry;
 import Project_0.util.ConnectionUtil;
 
-public class IndudstryDao implements IndustryDaoInterface {
+public class IndustryDao implements IndustryDaoInterface {
 
 	@Override
 	public List<Industry> getIndustries() {
@@ -29,11 +29,11 @@ public class IndudstryDao implements IndustryDaoInterface {
 					
 					while(rs.next()) {
 						
-						Industry d = new Industry();
-							rs.getInt("sector_id");
-							rs.getString("ai_codename");
-							rs.getString("serv_location");
-							
+						Industry d = new Industry(
+							rs.getString("industry_type"),
+							rs.getInt("industry_requirement")
+						);
+						
 						industryList.add(d);
 						
 					}

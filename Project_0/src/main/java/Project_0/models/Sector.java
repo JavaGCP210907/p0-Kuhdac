@@ -10,6 +10,16 @@ public class Sector {
 	public Sector() {
 		super();
 	}
+	
+
+	public Sector(int sector_id, String ai_codename, String serv_location) {
+		super();
+		this.sector_id = sector_id;
+		this.ai_codename = ai_codename;
+		this.serv_location = serv_location;
+	}
+
+
 
 	@Override
 	public String toString() {

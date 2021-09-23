@@ -29,11 +29,11 @@ public class SectorDao implements SectorDaoInterface {
 			
 			while(rs.next()) {
 				
-				Sector d = new Sector();
-					rs.getInt("sector_id");
-					rs.getString("ai_codename");
-					rs.getString("serv_location");
-					
+				Sector d = new Sector(
+					rs.getInt("sector_id"),
+					rs.getString("ai_codename"),
+					rs.getString("serv_location")
+				);
 				sectorList.add(d);
 				
 			}
