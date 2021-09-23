@@ -12,6 +12,7 @@ import Project_0.models.Pod;
 import Project_0.util.ConnectionUtil;
 
 public class PodDao implements PodDaoInterface{
+	
 
 	@Override
 	public List<Pod> getPods() {
@@ -20,7 +21,7 @@ public class PodDao implements PodDaoInterface{
 			
 			ResultSet rs = null;
 			
-			String sql = "select * from pod";
+			String sql = "select * from pod order by pod_id";
 			
 			Statement s= conn.createStatement();
 			
@@ -33,7 +34,7 @@ public class PodDao implements PodDaoInterface{
 				Pod p = new Pod(
 					rs.getInt("pod_id"),
 					rs.getInt("pod_count"),
-					rs.getInt("grid_id")
+					rs.getInt("grid_id_fk")
 				);
 				
 				podList.add(p);
@@ -56,9 +57,24 @@ public class PodDao implements PodDaoInterface{
 		
 		try(Connection conn = ConnectionUtil.getConnection()){
 			
-			String sql = "delete from pod where pod_id = ?";
+			ProductionDao proDao = new ProductionDao();
 			
+			ResultSet rs = null;
+			String sql = "delete from pod where pod_id = ?";
+			String query = "select * from pod where pod_id = ?";
+			
+			PreparedStatement qs = conn.prepareStatement(query);
 			PreparedStatement ps = conn.prepareStatement(sql);
+			
+			qs.setInt(1, pod_id);
+			rs = qs.executeQuery();
+			
+			while(rs.next()) {
+				int grid = rs.getInt("grid_id_fk");
+				int count = rs.getInt("pod_count");
+				
+				proDao.podRemoval(grid, count);
+			}
 			
 			ps.setInt(1,pod_id);
 			ps.executeUpdate();
@@ -98,7 +114,7 @@ public class PodDao implements PodDaoInterface{
 					
 					ResultSet rs = null;
 					
-					String sql = "select * from employees where pod_id = ?";
+					String sql = "select * from pod where grid_id_fk = ?";
 					
 					PreparedStatement ps = conn.prepareStatement(sql);
 					
@@ -108,12 +124,13 @@ public class PodDao implements PodDaoInterface{
 					
 					List<Pod> podList = new ArrayList<>();
 								
-					while(rs.next()) { 
+					while(rs.next()) {
+						
 						
 						Pod e = new Pod(
 							rs.getInt("pod_id"),
 							rs.getInt("pod_count"),
-							rs.getInt("grid_id")
+							rs.getInt("grid_id_fk")
 						);
 						
 						podList.add(e);
@@ -180,3 +197,4 @@ public class PodDao implements PodDaoInterface{
 
 
 
+;

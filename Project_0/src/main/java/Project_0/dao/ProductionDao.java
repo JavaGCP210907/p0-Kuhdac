@@ -60,6 +60,25 @@ public class ProductionDao implements ProductionDaoInterface {
 		}
 		
 	}
+	
+	public void podRemoval(int grid_id, int podCount) {
+		try(Connection conn = ConnectionUtil.getConnection()){
+			
+			String sql = "update production set h_assigned = h_assigned - ? where grid_id = ?";
+			
+			PreparedStatement ps = conn.prepareStatement(sql);
+			
+			ps.setInt(2, grid_id);
+			ps.setInt(1, podCount);
+			ps.executeUpdate();
+
+			
+		} catch(SQLException e) {
+			System.out.println("Connection failed");
+			e.printStackTrace();
+		}
+		
+	}
 
 	@Override
 	public List<Production> getGridsBySector(int sector_id) {
@@ -67,7 +86,7 @@ public class ProductionDao implements ProductionDaoInterface {
 					
 					ResultSet rs = null;
 					
-					String sql = "select * from production where sector_id_fk = ?";
+					String sql = "select * from production where sector_id_fk = ? order by sector_id_fk";
 					
 					PreparedStatement ps = conn.prepareStatement(sql);
 					
@@ -104,7 +123,7 @@ public class ProductionDao implements ProductionDaoInterface {
 			
 			ResultSet rs = null;
 			
-			String sql = "select * from production where industry_type_fk = ?";
+			String sql = "select * from production where industry_type_fk = ? order by sector_id_fk";
 			
 			PreparedStatement ps = conn.prepareStatement(sql);
 			
@@ -141,7 +160,7 @@ public class ProductionDao implements ProductionDaoInterface {
 			
 			ResultSet rs = null;
 			
-			String sql = "select * from production";
+			String sql = "select * from production order by sector_id_fk";
 			
 			Statement s = conn.createStatement();
 			
@@ -172,7 +191,7 @@ public class ProductionDao implements ProductionDaoInterface {
 	}
 
 	@Override
-	public List<Production> removeBySector(int sector_id) {
+	public void removeBySector(int sector_id) {
 		try(Connection conn = ConnectionUtil.getConnection()){
 			
 			String sql = "update production set h_assigned = 0 where sector_id_fk = ?";
@@ -190,7 +209,6 @@ public class ProductionDao implements ProductionDaoInterface {
 			System.out.println("The resistance is too strong");
 			e.printStackTrace();
 			}
-		return null;
 	}
 
 	

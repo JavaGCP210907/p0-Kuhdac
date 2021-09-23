@@ -16,7 +16,9 @@ public interface ProductionDaoInterface {
 	
 	public List<Production> getGrids();
 	
-	public List<Production> removeBySector(int sector_id);
+	public void podRemoval(int grid_id, int podCount);
+	
+	public void removeBySector(int sector_id);
 	
 	public void reinforceSector(int sector_id);
 }

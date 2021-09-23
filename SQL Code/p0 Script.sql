@@ -74,7 +74,12 @@ WHERE pod_id = (
 TRUNCATE TABLE sector CASCADE;
 TRUNCATE TABLE industry CASCADE;
 TRUNCATE TABLE production CASCADE;
-
-SELECT production.sector_id_fk, industry.industry_requirement, production.h_assigned, 
+SELECT sector_id_fk, industry_type_fk, grid_id , h_assigned, industry.industry_requirement,
+ (industry.industry_requirement - production.h_assigned) AS Difference
+FROM production
+JOIN industry ON industry_type_fk = industry.industry_type
+WHERE sector_id_fk = 3
+ORDER BY sector_id_fk;
+SELECT production.sector_id_fk, 
 	   (industry.industry_requirement - production.h_assigned)
 	   AS Difference FROM industry, production;

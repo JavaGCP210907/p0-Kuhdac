@@ -20,9 +20,6 @@ public class Launcher {
 			e.printStackTrace();
 		}
 		
-		Range<Integer> range = Range.open(1,66);
-		System.out.println(range);
-		
 		Menu menu = new Menu();
 		menu.displayMenu();
 		
