@@ -12,8 +12,11 @@ public interface PodDaoInterface {
 	
 	public void removePod(int pod_id);
 	
+	public void removePodBySector(int sector_id);
+	
 	public void podCasualty(int grid_id, int casualities);
 	
-	public void addPod(int pod_count, int grid_id);
+	public void addPod(int _count, int grid_id);
+	
 
 }

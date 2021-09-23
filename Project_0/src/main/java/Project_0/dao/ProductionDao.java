@@ -8,11 +8,12 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
-import Project_0.models.Pod;
 import Project_0.models.Production;
 import Project_0.util.ConnectionUtil;
 
 public class ProductionDao implements ProductionDaoInterface {
+	
+	PodDao pod = new PodDao();
 
 	@Override
 	public void assignPod(int grid_id, int pod_count) {
@@ -26,7 +27,9 @@ public class ProductionDao implements ProductionDaoInterface {
 					ps.setInt(2, grid_id);
 					ps.executeUpdate();
 					
-					System.out.println(grid_id + "has been succesfully bolstered with " + pod_count + " eager workers");
+					//Add pod with pod_count number to pod database
+					pod.addPod(pod_count, grid_id);
+					
 					
 				} catch(SQLException e) {
 					System.out.println("Connection failed");
@@ -43,9 +46,11 @@ public class ProductionDao implements ProductionDaoInterface {
 			
 			PreparedStatement ps = conn.prepareStatement(sql);
 			
-			ps.setInt(1, grid_id);
-			ps.setInt(2, casualties);
+			ps.setInt(2, grid_id);
+			ps.setInt(1, casualties);
 			ps.executeUpdate();
+			
+			pod.podCasualty(grid_id, casualties);
 			
 			System.out.println(casualties + " casualities in " + grid_id + " has been documented.");
 			
@@ -169,21 +174,61 @@ public class ProductionDao implements ProductionDaoInterface {
 	@Override
 	public List<Production> removeBySector(int sector_id) {
 		try(Connection conn = ConnectionUtil.getConnection()){
-					
-					String sql = "update production set h_assigned = 0 where sector_id_fk = ?";
-					
-					PreparedStatement ps = conn.prepareStatement(sql);
-					
-					ps.setInt(1, sector_id);
-					ps.executeUpdate();
-					
-					System.out.println("Sector " + sector_id + " has been purged");
-					
-				} catch(SQLException e) {
-					System.out.println("The resistance is too strong");
-					e.printStackTrace();
-				}
+			
+			String sql = "update production set h_assigned = 0 where sector_id_fk = ?";
+			
+			PreparedStatement ps = conn.prepareStatement(sql);
+			
+			ps.setInt(1, sector_id);
+			ps.executeUpdate();
+			
+			pod.removePodBySector(sector_id);
+			
+			System.out.println("Sector " + sector_id + " has been purged");
+			
+		} catch(SQLException e) {
+			System.out.println("The resistance is too strong");
+			e.printStackTrace();
+			}
 		return null;
 	}
 
+	
+	@Override
+	public void reinforceSector(int sector_id) {
+		try(Connection conn = ConnectionUtil.getConnection()){
+			
+			ResultSet rs = null;
+			String sql = "select sector_id_fk, industry_type_fk, grid_id , h_assigned, industry.industry_requirement,"
+					+ " (industry.industry_requirement - production.h_assigned) as difference"
+					+ " from production"
+					+ " join industry on industry_type_fk = industry.industry_type"
+					+ " where sector_id_fk = ?"
+					+ " order by sector_id_fk";
+			
+			PreparedStatement ps = conn.prepareStatement(sql);
+			
+			ps.setInt(1, sector_id);
+			rs = ps.executeQuery();
+			
+			while (rs.next()) {
+				
+				int diff = rs.getInt("difference");
+				int grid = rs.getInt("grid_id");
+				
+				if (diff > 0) {
+				
+					assignPod(grid, diff);
+				}
+			}
+				
+			System.out.println("Sector " + sector_id + " has been reinforced");
+			
+		} catch(SQLException e) {
+			System.out.println("Unable to ship in new workers");
+			e.printStackTrace();
+		}
+		
+	}
+	
 }

@@ -14,7 +14,7 @@ CREATE TABLE production (
 	sector_id_fk int,
 	industry_type_fk TEXT,
 	grid_id serial UNIQUE,
-	h_assigned int,
+	h_assigned int DEFAULT 0,
 	FOREIGN KEY (sector_id_fk) REFERENCES sector(sector_id),
 	FOREIGN KEY (industry_type_fk) REFERENCES industry(industry_type),
 	UNIQUE (sector_id_fk, industry_type_fk)
@@ -56,11 +56,25 @@ SELECT industry_type, sector_id FROM industry, sector;
 DROP TABLE sector, industry, pod;
 DROP TABLE industry;
 DROP TABLE pod;
-DROP TABLE production;
+DROP TABLE production ;
 SELECT * FROM sector;
 SELECT * FROM industry;
 SELECT * FROM production;
 SELECT * FROM pod;
-TRUNCATE TABLE production CASCADE;
+SELECT sector_id_fk, industry_type_fk, grid_id , h_assigned, industry.industry_requirement 
+FROM production
+JOIN industry ON industry_type_fk = industry.industry_type
+ORDER BY sector_id_fk;
+UPDATE pod SET pod_count = pod_count - 15
+WHERE pod_id = (
+	SELECT pod_id
+	FROM pod
+	WHERE grid_id_fk = 2
+	LIMIT 1);
 TRUNCATE TABLE sector CASCADE;
 TRUNCATE TABLE industry CASCADE;
+TRUNCATE TABLE production CASCADE;
+
+SELECT production.sector_id_fk, industry.industry_requirement, production.h_assigned, 
+	   (industry.industry_requirement - production.h_assigned)
+	   AS Difference FROM industry, production;
