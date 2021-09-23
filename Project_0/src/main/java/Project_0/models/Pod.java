@@ -22,6 +22,15 @@ public class Pod {
 
 
 
+	public Pod(int pod_id, int pod_count, int grid_id_fk) {
+		super();
+		this.pod_id = pod_id;
+		this.pod_count = pod_count;
+		this.grid_id_fk = grid_id_fk;
+	}
+
+
+
 	public int getPod_id() {
 		return pod_id;
 	}

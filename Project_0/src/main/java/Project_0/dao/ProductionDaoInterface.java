@@ -10,11 +10,11 @@ public interface ProductionDaoInterface {
 	
 	public void casualty(int grid_id, int casualties);
 	
-	public List<Production> getGridBySector(int sectorId);
+	public List<Production> getGridsBySector(int sector_id);
 	
-	public List<Production> getGridByIndustry(String industry);
+	public List<Production> getGridsByIndustry(String industry);
 	
-	public List<Production> getGrid();
+	public List<Production> getGrids();
 	
-	public List<Production> removeBySector(int sectorId);
+	public List<Production> removeBySector(int sector_id);
 }

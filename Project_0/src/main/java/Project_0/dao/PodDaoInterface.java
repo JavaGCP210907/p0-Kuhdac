@@ -8,12 +8,12 @@ public interface PodDaoInterface {
 	
 	public List<Pod> getPods(); //Returns all Pods
 	
-	public List<Pod> getPodsByID(int pod_id);
+	public List<Pod> getPodsById(int grid_id);
 	
 	public void removePod(int pod_id);
 	
 	public void podCasualty(int grid_id, int casualities);
 	
-	public void addPod(int h_count, int grid_id);
+	public void addPod(int pod_count, int grid_id);
 
 }
